@@ -29,6 +29,14 @@ class Customer(models.Model):
     )
 
 
+class Address(models.Model):
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    customer = models.OneToOneField(
+        Customer, on_delete=models.CASCADE, primary_key=True
+    )
+
+
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = "P"
     PAYMENT_STATUS_COMPLETE = "C"
@@ -38,7 +46,7 @@ class Order(models.Model):
         (PAYMENT_STATUS_COMPLETE, "Complete"),
         (PAYMENT_STATUS_FAILED, "Failed"),
     ]
-    
+
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING

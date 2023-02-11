@@ -1,5 +1,5 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def greeting(request):
-    return HttpResponse("<h1>Good Day</h1>")
+    return render(request, "home.html", {"name": "Nina"})

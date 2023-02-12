@@ -1,21 +1,10 @@
 from django.shortcuts import render
-from django.db.models.aggregates import Min, Max, Count, Avg, Sum
-from store.models import Product
+from django.db.models import Value, F
+from store.models import Customer
 
 
 def greeting(request):
-    result = Product.objects.aggregate(
-        count=Count("id"),
-        sum=Sum("unit_price"),
-        avg=Avg("unit_price"),
-        min=Min("unit_price"),
-        max=Max("unit_price"),
-    )
-    result = Product.objects.filter(collection__id=1).aggregate(
-        count=Count("id"),
-        sum=Sum("unit_price"),
-        avg=Avg("unit_price"),
-        min=Min("unit_price"),
-        max=Max("unit_price"),
-    )
+    queryset = Customer.objects.annotate(is_new=Value(True))
+    queryset = Customer.objects.annotate(new_id=F('id') + 1)
+    list(queryset)
     return render(request, "home.html", {"name": "Nina"})

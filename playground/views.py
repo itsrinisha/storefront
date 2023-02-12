@@ -5,20 +5,8 @@ from store.models import Product
 
 
 def greeting(request):
-    queryset = Product.objects.order_by("title")
-    queryset = Product.objects.order_by("-title")
-
-    queryset = Product.objects.order_by("unit_price", "title")
-    queryset = Product.objects.order_by("unit_price", "-title")
-    queryset = Product.objects.order_by("-unit_price", "title")
-    queryset = Product.objects.order_by("-unit_price", "-title")
-
-    queryset = Product.objects.order_by("title").reverse()
-    queryset = Product.objects.filter(collection__id=1).order_by("unit_price")
+    queryset = Product.objects.all()[:5]
+    queryset = Product.objects.all()[8:15]
     list(queryset)
-
-    product = Product.objects.order_by("unit_price")[0]
-    product = Product.objects.earliest("unit_price")
-    product = Product.objects.latest("unit_price")
 
     return render(request, "home.html", {"name": "Nina"})

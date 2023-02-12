@@ -4,21 +4,26 @@ from store.models import Product
 
 
 def greeting(request):
-    # all
-    products = Product.objects.all()
-    list(products)
+    queryset = Product.objects.filter(unit_price__gt=20)
+    queryset = Product.objects.filter(unit_price__lt=20)
+    queryset = Product.objects.filter(unit_price__gte=20)
+    queryset = Product.objects.filter(unit_price__lte=20)
+    queryset = Product.objects.filter(unit_price__range=(10, 50))
 
-    # get
-    # try:
-    #     product = Product.objects.get(pk=0)
-    # except ObjectDoesNotExist:
-    #     pass
-        
-    # filter
-    # product = Product.objects.filter(pk=0).first()
+    queryset = Product.objects.filter(collection__id=1)
+    queryset = Product.objects.filter(collection__id__range=(1, 2, 3))
+    queryset = Product.objects.filter(collection__title="Beauty")
 
-    # exists
-    # product = Product.objects.filter(pk=0).exists()
+    queryset = Product.objects.filter(title__contains="coffee")
+    queryset = Product.objects.filter(title__icontains="coffee")
+    queryset = Product.objects.filter(title__startswith="coffee")
+    queryset = Product.objects.filter(title__istartswith="coffee")
+    queryset = Product.objects.filter(title__endswith="coffee")
+    queryset = Product.objects.filter(title__iendswith="coffee")
 
+    queryset = Product.objects.filter(last_update__year=2000)
+
+    queryset = Product.objects.filter(description__isnull=True)
+    list(queryset)
 
     return render(request, "home.html", {"name": "Nina"})

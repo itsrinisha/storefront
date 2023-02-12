@@ -1,11 +1,14 @@
 from django.shortcuts import render
-from django.db.models import ExpressionWrapper, F, DecimalField
+from django.contrib.contenttypes.models import ContentType
 from store.models import Product
+from tags.models import TaggedItem
 
 
 def greeting(request):
-    queryset = Product.objects.annotate(
-        new_price=ExpressionWrapper(F("unit_price") * 1.5, output_field=DecimalField())
+    content_type = ContentType.objects.get_for_model(Product)
+    queryset = TaggedItem.objects.filter(
+        content_type=content_type,
+        object_id=1,
     )
     list(queryset)
     return render(request, "home.html", {"name": "Nina"})

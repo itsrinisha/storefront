@@ -1,22 +1,21 @@
 from django.shortcuts import render
-from store.models import Product, Order
+from django.db.models.aggregates import Min, Max, Count, Avg, Sum
+from store.models import Product
 
 
 def greeting(request):
-    queryset = Product.objects.select_related("collection").all()
-    queryset = Product.objects.prefetch_related("promotions").all()
-    queryset = (
-        Product.objects.select_related("collection")
-        .prefetch_related("promotions")
-        .all()
+    result = Product.objects.aggregate(
+        count=Count("id"),
+        sum=Sum("unit_price"),
+        avg=Avg("unit_price"),
+        min=Min("unit_price"),
+        max=Max("unit_price"),
     )
-
-    # Get the last 5 orders with their customer and items
-    queryset = (
-        Order.objects.select_related("customer")
-        .prefetch_related("orderitem_set__product")
-        .order_by("-placed_at")[:5]
+    result = Product.objects.filter(collection__id=1).aggregate(
+        count=Count("id"),
+        sum=Sum("unit_price"),
+        avg=Avg("unit_price"),
+        min=Min("unit_price"),
+        max=Max("unit_price"),
     )
-    list(queryset)
-
     return render(request, "home.html", {"name": "Nina"})

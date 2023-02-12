@@ -1,8 +1,10 @@
 from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
 from . import models
+from tags.models import TaggedItem
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -19,23 +21,25 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
 
 
+class TagInline(GenericTabularInline):
+    model = TaggedItem
+    autocomplete_fields = ["tag"]
+
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    # fields = ["title", "slug"]
-    # exclude = ["description"]
-    # readonly_fields = ["title"]
-    prepopulated_fields = {
-        "slug": ["title"],
-    }
-    autocomplete_fields = ["collection"]
-
+    inlines = [TagInline]
     actions = ["clear_inventory"]
+    autocomplete_fields = ["collection"]
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
     list_editable = ["unit_price"]
     list_per_page = 10
     list_select_related = ["collection"]
     list_filter = ["collection", "last_update", InventoryFilter]
     search_fields = ["title"]
+    prepopulated_fields = {
+        "slug": ["title"],
+    }
 
     @admin.display(ordering="inventory")
     def inventory_status(self, product):

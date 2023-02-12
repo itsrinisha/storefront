@@ -1,33 +1,17 @@
 from django.shortcuts import render
-from store.models import Order, OrderItem
-from django.db import transaction
-
-
-# @transaction.atomic()
-# def greeting(request):
-#     order = Order()
-#     order.customer_id = 1
-#     order.save()
-
-#     item = OrderItem()
-#     item.order = order
-#     item.product_id = 20
-#     item.quantity = 1
-#     item.unit_price = 8
-#     item.save()
-#     return render(request, "home.html", {"name": "Nina"})
+from django.db import connection
+from store.models import Product
 
 
 def greeting(request):
-    with transaction.atomic():
-        order = Order()
-        order.customer_id = 1
-        order.save()
+    products = Product.objects.raw("SELECT id, title FROM store_product")
+    products = Product.objects.raw("SELECT * FROM store_product")
+    print(products)
+    list(products)
 
-        item = OrderItem()
-        item.order = order
-        item.product_id = 20
-        item.quantity = 1
-        item.unit_price = 8
-        item.save()
-        return render(request, "home.html", {"name": "Nina"})
+    # Execute SQL queries not tied to a model
+    with connection.cursor() as cursor:
+        cursor.execute("INSERT ...............")
+        cursor.callproc("get_customers", [1, 2, "a"])
+
+    return render(request, "home.html", {"name": "Nina"})

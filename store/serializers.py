@@ -33,14 +33,3 @@ class ProductSerializer(serializers.ModelSerializer):
     def calculate_tax(self, product):
         return product.unit_price * Decimal(1.5)
 
-    # Object Level Validation
-    def validate(self, product):
-        if product["title"] != "Apple":
-            raise serializers.ValidationError("Name should start with Apple")
-        return product
-
-    # Field Level Valdation
-    def validate_unit_price(self, unit_price):
-        if unit_price < 100:
-            raise serializers.ValidationError("Price should be more than 100")
-        return unit_price

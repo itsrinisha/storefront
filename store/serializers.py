@@ -28,3 +28,15 @@ class ProductSerializer(serializers.ModelSerializer):
     def calculate_tax(self, product):
         return product.unit_price * Decimal(1.5)
 
+    # Overrides default create behavior
+    def create(self, validated_data):
+        product = Product(**validated_data)
+        product.collection_id = 2
+        product.save()
+        return product
+
+    # Overrides default update behavior
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title") + "Apple"
+        instance.save()
+        return instance

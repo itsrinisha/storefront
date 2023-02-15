@@ -1,10 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .filters import ProductFilter
+from .pagination import CustomPagination
 from .models import Product, Collection, OrderItem, Review
 from .serializers import ProductSerializer, CollectionSerializer, ReviewSerializer
 
@@ -16,9 +16,7 @@ class ProductViewSet(ModelViewSet):
     filterset_class = ProductFilter
     search_fields = ["title", "description"]
     ordering_fields = ["unit_price", "last_update"]
-
-    # View Level
-    # pagination_class = LimitOffsetPagination
+    pagination_class = CustomPagination
 
     def get_serializer_context(self):
         return {"request": self.request}

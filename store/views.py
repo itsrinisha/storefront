@@ -11,8 +11,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAdminUser,
-    DjangoModelPermissions,
-    DjangoModelPermissionsOrAnonReadOnly,
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -39,6 +37,7 @@ from .serializers import (
     UpdateCartItemSerializer,
     CustomerSerializer,
     OrderSerializer,
+    CreateOrderSerializer,
 )
 
 
@@ -137,7 +136,6 @@ class CustomerViewSet(ModelViewSet):
 
 
 class OrderViewSet(ModelViewSet):
-    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -148,3 +146,17 @@ class OrderViewSet(ModelViewSet):
             user_id=user.id
         )
         return Order.objects.filter(customer_id=customer_id)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CreateOrderSerializer
+        return OrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = CreateOrderSerializer(
+            data=request.data, context={"user_id": self.request.user.id}
+        )
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
